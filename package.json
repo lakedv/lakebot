@@ -1,0 +1,29 @@
+{
+  "name": "lakebot",
+  "version": "1.0.0",
+  "description": "server-for-lakebot",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lakedv/lakebot.git"
+  },
+  "keywords": [
+    "chatbot"
+  ],
+  "author": "Lakedv",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/lakedv/lakebot/issues"
+  },
+  "homepage": "https://github.com/lakedv/lakebot#readme",
+  "dependencies": {
+    "@google-cloud/dialogflow": "^6.10.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "socket.io": "^4.8.1"
+  }
+}
