@@ -1,13 +1,12 @@
-require('dotenv').config();
+require("dotenv").config();
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
-const dialogflow = require('@google-cloud/dialogflow')
-
+const dialogflow = require("@google-cloud/dialogflow");
 
 const messages = [];
 const app = express();
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || 3001;
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -18,7 +17,7 @@ const io = new Server(server, {
 });
 
 const sessionClient = new dialogflow.SessionsClient();
-const projectId = process.env.PROJECT_ID
+const projectId = process.env.PROJECT_ID;
 
 io.on("connection", (socket) => {
   console.log("Nuevo usuario conectado:", socket.id);
@@ -44,18 +43,21 @@ io.on("connection", (socket) => {
 
 async function detectIntent(message) {
   const sessionId = Math.random().toString(36).substring(7);
-  const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);
+  const sessionPath = sessionClient.projectAgentSessionPath(
+    projectId,
+    sessionId
+  );
 
   const request = {
     session: sessionPath,
     queryInput: {
       text: {
         text: message,
-        languageCode: 'es',
+        languageCode: "es",
       },
     },
   };
-  const responses = await sessionClient.detectIntent(request)
+  const responses = await sessionClient.detectIntent(request);
   return responses[0].queryResult;
 }
 
