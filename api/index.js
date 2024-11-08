@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3001;
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://lakedv.github.io/",
+    origin: "https://lakedv.github.io",
     methods: ["GET", "POST"],
   },
 });
