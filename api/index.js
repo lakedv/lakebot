@@ -1,6 +1,5 @@
 require("dotenv").config();
 const express = require("express");
-const http = require("http");
 const Pusher = require("pusher");
 const dialogflow = require("@google-cloud/dialogflow");
 const cors = require("cors");
@@ -8,7 +7,6 @@ const cors = require("cors");
 const messages = [];
 const app = express();
 const PORT = process.env.PORT || 3001;
-const server = http.createServer(app);
 const sessionClient = new dialogflow.SessionsClient();
 const projectId = process.env.PROJECT_ID;
 
@@ -62,6 +60,6 @@ app.get("/", (req, res) => {
   res.send("Api is online");
 });
 
-server.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
