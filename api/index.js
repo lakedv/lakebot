@@ -12,16 +12,7 @@ const server = http.createServer(app);
 const sessionClient = new dialogflow.SessionsClient();
 const projectId = process.env.PROJECT_ID;
 
-const allowedOrigins = [
-  "https://lakedv.github.io",
-  "http://localhost:3000"
-]
-
-app.use(cors({
-  origin: allowedOrigins,
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type"]
-}));
+app.use(cors());
 app.use(express.json());
 
 //Conexion Pusher
