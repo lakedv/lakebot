@@ -23,6 +23,7 @@ const pusher = new Pusher({
 })
 
 app.post("/Chatbot", async (req, res) => {
+  try {
   const {message} = req.body
   console.log("Mensaje recibido:", message)
 
@@ -34,9 +35,14 @@ app.post("/Chatbot", async (req, res) => {
   })
 
   res.status(200).send("Mensaje enviado");
+} catch(error) {
+    console.error("Error en /Chatbot", error.message);
+    res.status(500).json({error: "Ocurrió un error procesando el mensaje"})
+}
 })
 
 async function detectIntent(message) {
+  try {
   const sessionId = Math.random().toString(36).substring(7);
   const sessionPath = sessionClient.projectAgentSessionPath(
     projectId,
@@ -54,6 +60,10 @@ async function detectIntent(message) {
   };
   const responses = await sessionClient.detectIntent(request);
   return responses[0].queryResult;
+} catch (error) {
+  console.error("Error en detectIntent", error.message);
+  throw new Error("Error al comunciarse con DialogFlow")
+}
 }
 
 app.get("/", (req, res) => {
