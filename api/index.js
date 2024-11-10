@@ -13,7 +13,7 @@ const sessionClient = new dialogflow.SessionsClient();
 const projectId = process.env.PROJECT_ID;
 
 const allowedOrigins = [
-  "https://lakedv.github.io/",
+  "https://lakedv.github.io",
   "http://localhost:3000"
 ]
 
