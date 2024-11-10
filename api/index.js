@@ -1,45 +1,51 @@
 require("dotenv").config();
 const express = require("express");
 const http = require("http");
-const { Server } = require("socket.io");
+const Pusher = require("pusher");
 const dialogflow = require("@google-cloud/dialogflow");
+const cors = require("cors");
 
 const messages = [];
 const app = express();
 const PORT = process.env.PORT || 3001;
-
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "https://lakedv.github.io",
-    methods: ["GET", "POST"],
-  },
-});
-
 const sessionClient = new dialogflow.SessionsClient();
 const projectId = process.env.PROJECT_ID;
 
-io.on("connection", (socket) => {
-  console.log("Nuevo usuario conectado:", socket.id);
+const allowedOrigins = [
+  "https://lakedv.github.io",
+  "http://localhost:3000"
+]
 
-  io.on("init", () => {
-    io.emit("init", messages);
-  });
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type"]
+}));
+app.use(express.json());
 
-  // Recibir y reenviar mensajes
-  socket.on("sendMessage", async (message) => {
-    console.log("Mensaje Recibido:", message);
+//Conexion Pusher
+const pusher = new Pusher({
+  appId: process.env.PUSHER_APP_ID,
+  key: process.env.PUSHER_KEY,
+  secret: process.env.PUSHER_SECRET,
+  cluster: process.env.PUSHER_CLUSTER,
+  useTLS: true,
+})
 
-    const response = await detectIntent(message);
-    const botReply = response.fulfillmentText;
+app.post("/Chatbot", async (req, res) => {
+  const {message} = req.body
+  console.log("Mensaje recibido:", message)
 
-    io.emit("receiveMessage", `GerBot: ${botReply}`);
-  });
+  const response = await detectIntent(message)
+  const botReply = response.fulfillmentText;
 
-  socket.on("disconnect", () => {
-    console.log("Usuario desconectado:", socket.id);
-  });
-});
+  pusher.trigger("chat", "receiveMessage", {
+    message: `GerBot: ${botReply}`,
+  })
+
+  res.status(200).send("Mensaje enviado");
+})
 
 async function detectIntent(message) {
   const sessionId = Math.random().toString(36).substring(7);
