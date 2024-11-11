@@ -18,8 +18,12 @@ const projectId = process.env.PROJECT_ID;
 const allowedOrigins = [
   "http://localhost:3000",
   "https://lakebot-api.vercel.app",
-  "https://lakedv.github.io/Chatbot"
+  "https://lakedv.github.io"
+
 ]
+
+app.options('*', cors())
+
 app.use(
   cors({
     origin: function (origin, callback) {
