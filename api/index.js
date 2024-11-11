@@ -7,9 +7,10 @@ const cors = require("cors");
 const messages = [];
 const app = express();
 const PORT = process.env.PORT || 3001;
+const privateKey = JSON.parse(process.env.GOOGLE_PRIVATE_KEY);
 const config = {
   credentials:{
-    private_key: process.env.GOOGLE_PRIVATE_KEY,
+    private_key: privateKey.value,
     client_email: process.env.GOOGLE_CLIENT_EMAIL
   } 
 }
