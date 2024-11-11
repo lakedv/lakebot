@@ -7,7 +7,12 @@ const cors = require("cors");
 const messages = [];
 const app = express();
 const PORT = process.env.PORT || 3001;
-const sessionClient = new dialogflow.SessionsClient();
+const sessionClient = new dialogflow.SessionsClient({
+  credentials:{
+    private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+    client_email: process.env.GOOGLE_CLIENT_EMAIL
+  }
+});
 const projectId = process.env.PROJECT_ID;
 
 app.use(cors());
@@ -20,50 +25,50 @@ const pusher = new Pusher({
   secret: process.env.PUSHER_SECRET,
   cluster: process.env.PUSHER_CLUSTER,
   useTLS: true,
-})
+});
 
 app.post("/Chatbot", async (req, res) => {
   try {
-  const {message} = req.body
-  console.log("Mensaje recibido:", message)
+    const { message } = req.body;
+    console.log("Mensaje recibido:", message);
 
-  const response = await detectIntent(message)
-  const botReply = response.fulfillmentText;
+    const response = await detectIntent(message);
+    const botReply = response.fulfillmentText;
 
-  pusher.trigger("chat", "receiveMessage", {
-    message: `GerBot: ${botReply}`,
-  })
+    pusher.trigger("chat", "receiveMessage", {
+      message: `GerBot: ${botReply}`,
+    });
 
-  res.status(200).send("Mensaje enviado");
-} catch(error) {
+    res.status(200).send("Mensaje enviado");
+  } catch (error) {
     console.error("Error en /Chatbot", error.message);
-    res.status(500).json({error: "Ocurrió un error procesando el mensaje"})
-}
-})
+    res.status(500).json({ error: "Ocurrió un error procesando el mensaje" });
+  }
+});
 
 async function detectIntent(message) {
   try {
-  const sessionId = Math.random().toString(36).substring(7);
-  const sessionPath = sessionClient.projectAgentSessionPath(
-    projectId,
-    sessionId
-  );
+    const sessionId = Math.random().toString(36).substring(7);
+    const sessionPath = sessionClient.projectAgentSessionPath(
+      projectId,
+      sessionId
+    );
 
-  const request = {
-    session: sessionPath,
-    queryInput: {
-      text: {
-        text: message,
-        languageCode: "es",
+    const request = {
+      session: sessionPath,
+      queryInput: {
+        text: {
+          text: message,
+          languageCode: "es",
+        },
       },
-    },
-  };
-  const responses = await sessionClient.detectIntent(request);
-  return responses[0].queryResult;
-} catch (error) {
-  console.error("Error en detectIntent", error.message);
-  throw new Error("Error al comunciarse con DialogFlow")
-}
+    };
+    const responses = await sessionClient.detectIntent(request);
+    return responses[0].queryResult;
+  } catch (error) {
+    console.error("Error en detectIntent", error.message);
+    throw new Error("Error al comunciarse con DialogFlow");
+  }
 }
 
 app.get("/", (req, res) => {
