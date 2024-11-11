@@ -17,7 +17,8 @@ const sessionClient = new dialogflow.SessionsClient(config);
 const projectId = process.env.PROJECT_ID;
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://lakebot-api.vercel.app"
+  "https://lakebot-api.vercel.app",
+  "https://lakedv.github.io/Chatbot"
 ]
 app.use(
   cors({
