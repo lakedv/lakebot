@@ -29,6 +29,8 @@ app.use(
         callback(new Error("No permitido por CORS"));
       }
     },
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 app.use(express.json());
