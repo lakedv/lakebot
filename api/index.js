@@ -7,15 +7,29 @@ const cors = require("cors");
 const messages = [];
 const app = express();
 const PORT = process.env.PORT || 3001;
-const sessionClient = new dialogflow.SessionsClient({
+const config = {
   credentials:{
     private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
     client_email: process.env.GOOGLE_CLIENT_EMAIL
-  }
-});
+  } 
+}
+const sessionClient = new dialogflow.SessionsClient(config);
 const projectId = process.env.PROJECT_ID;
-
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://lakebot-api.vercel.app"
+]
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("No permitido por CORS"));
+      }
+    },
+  })
+);
 app.use(express.json());
 
 //Conexion Pusher
